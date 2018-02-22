@@ -58,7 +58,7 @@ int main (void)
 
 		if (zaladuj_raz)// Przesunięcia fazowe
 		{
-			if(zmiana_pwm_1>(N*0.33)){licz_w_gore_2=1;}				 // Przesunięcie drugiej fazy 0 120 stopni względem pierwszej fazy.
+			if(zmiana_pwm_1>(N*0.33)){licz_w_gore_2=1;}		 // Przesunięcie drugiej fazy 0 120 stopni względem pierwszej fazy.
 			if(zmiana_pwm_1>(N*0.66)){licz_w_gore_3=1;zaladuj_raz=0;}// Przesunięcie trzeciej fazy 0 240 stopni względem pierwszej fazy.
 		}
 
