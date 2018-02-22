@@ -63,24 +63,24 @@ int main (void)
 		}
 
 
-		if (licznik>N) // Cykliczna zmiana elementów tablicy
+		if (licznik>N) 				// Cykliczna zmiana elementów tablicy
 		{
 			licznik=0;
 
-			if (licz_w_gore_1)//Zmiany wartości PWM dla pierwszej sinusoidy.
+			if (licz_w_gore_1)		//Zmiany wartości PWM dla pierwszej sinusoidy.
 			{zmiana_pwm_1++;
 			if(zmiana_pwm_1>N)zmiana_pwm_1=0;}
 
-			if (licz_w_gore_2)//Zmiany wartości PWM dla drugiej sinusoidy.
+			if (licz_w_gore_2)		//Zmiany wartości PWM dla drugiej sinusoidy.
 			{zmiana_pwm_2++;
 			if(zmiana_pwm_2>N)zmiana_pwm_2=0;}
 
-			if (licz_w_gore_3)//Zmiany wartości PWM dla trzeciej sinusoidy.
+			if (licz_w_gore_3)		//Zmiany wartości PWM dla trzeciej sinusoidy.
 			{zmiana_pwm_3++;
 			if(zmiana_pwm_3>N)zmiana_pwm_3=0;}
 		}
 
-		PWM_1=PWM_tablica[zmiana_pwm_1];  // Przypisanie zawartości kolejnych elementów tablicy do zmiennych PWM
+		PWM_1=PWM_tablica[zmiana_pwm_1]; 	// Przypisanie zawartości kolejnych elementów tablicy do zmiennych PWM
 		PWM_2=PWM_tablica[zmiana_pwm_2];
 		PWM_3=PWM_tablica[zmiana_pwm_3];
 
