@@ -3,23 +3,23 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 
-#define LED_1 1<<PC0	// Zdefiniowanie pinÛw.
+#define LED_1 1<<PC0			// Zdefiniowanie pin√≥w.
 #define LED_2 1<<PC1
 #define LED_3 1<<PC2
 
-volatile static uint16_t licznik; 		// Zmienna uzywane zarÛwno w petli g≥Ûwnej jak i w przerwaniu.
+volatile static uint16_t licznik; 	// Zmienna uzywane zar√≥wno w petli g≈Ç√≥wnej jak i w przerwaniu.
 uint16_t PWM_1, PWM_2, PWM_3;
 
-uint16_t zmiana_pwm_1; 		// Zmienne s≥uøπce do pobierania kolejnych wartoúci z tablicy
+uint16_t zmiana_pwm_1; 			// Zmienne s≈Çu≈ºƒÖce do pobierania kolejnych warto≈õci z tablicy
 uint16_t zmiana_pwm_2;
 uint16_t zmiana_pwm_3;
 
-uint8_t licz_w_gore_1=1; 	// Zmienne s≥uøπce do wygenerowania przesuniÍcia fazowego
+uint8_t licz_w_gore_1=1; 		// Zmienne s≈Çu≈ºƒÖce do wygenerowania przesuniƒôcia fazowego
 uint8_t licz_w_gore_2=0;
 uint8_t licz_w_gore_3=0;
 uint8_t zaladuj_raz=1;
 
-uint16_t rozdzielczosc=1000; // Zmienne s≥uøπce do wygenerowania tablicy z wartoúciami PWM dla sinusoidalnego kszta≥tu sygna≥u
+uint16_t rozdzielczosc=1000; 		// Zmienne s≈Çu≈ºƒÖce do wygenerowania tablicy z warto≈õciami PWM dla sinusoidalnego kszta≈Çtu sygna≈Çu
 uint16_t PWM_tablica[1000];
 uint16_t N;
 uint8_t stworz_tablice=1;
@@ -27,64 +27,64 @@ uint8_t dn;
 
 int main (void)
 {
-	TCCR0|= (1<<WGM01); // Ustawienie trybu licznika na CTC
-	TCCR0|= (1<<CS00);	// Preskaler =1
-	TIMSK|= (1<<OCIE0);	// Zezwolenie na wykonanie przerwania od compare match
-	OCR0=5; 			// Rejestr porÛwnania, licznik zlicza do osiπgniÍcia tej wartoúci.
-						// Przerwanie generowane z czÍstotliwoúciπ = 8Mhz/preskaler=1/OCRO=x
-						// Zmiany OCR0 wp≥ywa na czÍstotliwoúc sinusoidy
+	TCCR0|= (1<<WGM01); 		// Ustawienie trybu licznika na CTC
+	TCCR0|= (1<<CS00);		// Preskaler =1
+	TIMSK|= (1<<OCIE0);		// Zezwolenie na wykonanie przerwania od compare match
+	OCR0=5; 			// Rejestr por√≥wnania, licznik zlicza do osiƒÖgniƒôcia tej warto≈õci.
+					// Przerwanie generowane z czƒôstotliwo≈õciƒÖ = 8Mhz/preskaler=1/OCRO=x
+					// Zmiany OCR0 wp≈Çywa na czƒôstotliwo≈õc sinusoidy
 
-	DDRC |=  LED_1|LED_2|LED_3; 	// Piny jako wyjúcia.
-	PORTC|=  LED_1|LED_2|LED_3; 	// Podanie stanu wysokiego, ledy wy≥πczone w momencie w≥πczenie mikrokontroloera (dla led pod≥aczonych katodπ do pinÛw).
-	sei(); 							// Uruchomienie przerwaÒ.
+	DDRC |=  LED_1|LED_2|LED_3; 	// Piny jako wyj≈õcia.
+	PORTC|=  LED_1|LED_2|LED_3; 	// Podanie stanu wysokiego, ledy wy≈ÇƒÖczone w momencie w≈ÇƒÖczenie mikrokontroloera (dla led pod≈Çaczonych katodƒÖ do pin√≥w).
+	sei(); 				// Uruchomienie przerwa≈Ñ.
 
-	N=rozdzielczosc-1; 					  // Numer ostatniego elementu tablicy
-	dn=rozdzielczosc/(rozdzielczosc*0.5); // Przyrost wartoúci PWM
+	N=rozdzielczosc-1; 		 	// Numer ostatniego elementu tablicy
+	dn=rozdzielczosc/(rozdzielczosc*0.5); 	// Przyrost warto≈õci PWM
 
 	while(1)
 	{
-		//Utworzenie tablicy wartoúci PWM dla sinusoidalnego kszta≥tu sygna≥u.
+		//Utworzenie tablicy warto≈õci PWM dla sinusoidalnego kszta≈Çtu sygna≈Çu.
 		if(stworz_tablice) // Tablica zostania wykonana tylko raz, przy pierwszym przebiegu programu
 		{
 			uint16_t i=0;
-			for (i=0;i<1;i++){PWM_tablica[i]=(rozdzielczosc*0.5);} 				 // Poczπtek sinusoidy
+			for (i=0;i<1;i++){PWM_tablica[i]=(rozdzielczosc*0.5);} 			 // PoczƒÖtek sinusoidy
 			for (i=1;i<(N*0.25);i++){PWM_tablica[i]=PWM_tablica[i-1]+dn;} 		 // Narastanie sinusoidy do amplitudy dodatniej
-			for (i=N*0.25;i<(N*0.25)+1;i++){PWM_tablica[i]=N;} 					 // Amplituda dodatnia
+			for (i=N*0.25;i<(N*0.25)+1;i++){PWM_tablica[i]=N;} 			 // Amplituda dodatnia
 			for (i=(N*0.25)+1;i<(N*0.75);i++){PWM_tablica[i]=PWM_tablica[i-1]-dn;if(PWM_tablica[i]<0)PWM_tablica[i]=PWM_tablica[i-1];} // Spadek do amplitudy ujemnej
-			for (i=N*0.75;i<(N*0.75)+1;i++){PWM_tablica[i]=0;} 					 // Amplituda ujemna
-			for (i=(N*0.75)+1;i<=N;i++){PWM_tablica[i]=PWM_tablica[i-1]+dn;} 	 // Narastanie sinusoidy do poczπtku
+			for (i=N*0.75;i<(N*0.75)+1;i++){PWM_tablica[i]=0;} 			 // Amplituda ujemna
+			for (i=(N*0.75)+1;i<=N;i++){PWM_tablica[i]=PWM_tablica[i-1]+dn;} 	 // Narastanie sinusoidy do poczƒÖtku
 			if (i>N){stworz_tablice=0;}
 		}
 
-		if (zaladuj_raz==1)// PrzesuniÍcia fazowe
+		if (zaladuj_raz)// Przesuniƒôcia fazowe
 		{
-			if(zmiana_pwm_1>(N*0.33)){licz_w_gore_2=1;}				 // PrzesuniÍcie drugiej fazy 0 120 stopni wzglÍdem pierwszej fazy.
-			if(zmiana_pwm_1>(N*0.66)){licz_w_gore_3=1;zaladuj_raz=0;}// PrzesuniÍcie trzeciej fazy 0 240 stopni wzglÍdem pierwszej fazy.
+			if(zmiana_pwm_1>(N*0.33)){licz_w_gore_2=1;}				 // Przesuniƒôcie drugiej fazy 0 120 stopni wzglƒôdem pierwszej fazy.
+			if(zmiana_pwm_1>(N*0.66)){licz_w_gore_3=1;zaladuj_raz=0;}// Przesuniƒôcie trzeciej fazy 0 240 stopni wzglƒôdem pierwszej fazy.
 		}
 
 
-		if (licznik>N) // Cykliczna zmiana elementÛw tablicy
+		if (licznik>N) // Cykliczna zmiana element√≥w tablicy
 		{
 			licznik=0;
 
-			if (licz_w_gore_1==1)//Zmiany wartoúci PWM dla pierwszej sinusoidy.
+			if (licz_w_gore_1)//Zmiany warto≈õci PWM dla pierwszej sinusoidy.
 			{zmiana_pwm_1++;
 			if(zmiana_pwm_1>N)zmiana_pwm_1=0;}
 
-			if (licz_w_gore_2==1)//Zmiany wartoúci PWM dla drugiej sinusoidy.
+			if (licz_w_gore_2)//Zmiany warto≈õci PWM dla drugiej sinusoidy.
 			{zmiana_pwm_2++;
 			if(zmiana_pwm_2>N)zmiana_pwm_2=0;}
 
-			if (licz_w_gore_3==1)//Zmiany wartoúci PWM dla trzeciej sinusoidy.
+			if (licz_w_gore_3)//Zmiany warto≈õci PWM dla trzeciej sinusoidy.
 			{zmiana_pwm_3++;
 			if(zmiana_pwm_3>N)zmiana_pwm_3=0;}
 		}
 
-		PWM_1=PWM_tablica[zmiana_pwm_1];  // Przypisanie zawartoúci kolejnych elementÛw tablicy do zmiennych PWM
+		PWM_1=PWM_tablica[zmiana_pwm_1];  // Przypisanie zawarto≈õci kolejnych element√≥w tablicy do zmiennych PWM
 		PWM_2=PWM_tablica[zmiana_pwm_2];
 		PWM_3=PWM_tablica[zmiana_pwm_3];
 
-		if(licznik>=PWM_1)PORTC|=(LED_1); else PORTC&=~(LED_1); // Zmiana stanÛw na wyjúciach pinÛw
+		if(licznik>=PWM_1)PORTC|=(LED_1); else PORTC&=~(LED_1); // Zmiana stan√≥w na wyj≈õciach pin√≥w
 		if(licznik>=PWM_2)PORTC|=(LED_2); else PORTC&=~(LED_2);
 		if(licznik>=PWM_3)PORTC|=(LED_3); else PORTC&=~(LED_3);
 	}
@@ -92,7 +92,7 @@ int main (void)
 
 ISR(TIMER0_COMP_vect) // Wektor przerwania od compare match.
 {
-	licznik++; // Instrukcja obs≥ugi przerwania.
+	licznik++; // Instrukcja obs≈Çugi przerwania.
 }
 
 
