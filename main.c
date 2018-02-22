@@ -31,7 +31,7 @@ int main (void)
 	TCCR0|= (1<<CS00);		// Preskaler =1
 	TIMSK|= (1<<OCIE0);		// Zezwolenie na wykonanie przerwania od compare match
 	OCR0=5; 			// Rejestr porównania, licznik zlicza do osiągnięcia tej wartości.
-					// Przerwanie generowane z częstotliwością = 8Mhz/preskaler=1/OCRO=x
+					// Przerwanie generowane z częstotliwością = (8Mhz/preskaler=1/OCRO=x)
 					// Zmiany OCR0 wpływa na częstotliwośc sinusoidy
 
 	DDRC |=  LED_1|LED_2|LED_3; 	// Piny jako wyjścia.
