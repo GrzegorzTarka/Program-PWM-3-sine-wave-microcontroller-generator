@@ -19,8 +19,8 @@ uint8_t licz_w_gore_2=0;
 uint8_t licz_w_gore_3=0;
 uint8_t zaladuj_raz=1;
 
-uint16_t rozdzielczosc=1000; 		// Zmienne służące do wygenerowania tablicy z wartościami PWM dla sinusoidalnego kształtu sygnału
-uint16_t PWM_tablica[1000];
+uint16_t rozdzielczosc=512; 		// Zmienne służące do wygenerowania tablicy z wartościami PWM dla sinusoidalnego kształtu sygnału
+uint16_t PWM_tablica[512];
 uint16_t N;
 uint8_t stworz_tablice=1;
 uint8_t dn;
